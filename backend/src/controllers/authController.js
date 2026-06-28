@@ -4,39 +4,41 @@ const db = require('../config/database');
 
 async function register(req, res) {
     try {
-        const { name, email, password } = req.body;
+        const { name, email, cpf, password, phone } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: 'Nome, email e senha são obrigatórios'
+            });
+        }
 
         const [existingUser] = await db.query(
-            'SELECT * FROM user WHERE email = ?',
+            'SELECT id FROM User WHERE email = ?',
             [email]
         );
 
         if (existingUser.length > 0) {
             return res.status(400).json({
-                message: 'Email already exists'
+                message: 'O email já existe'
             });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
         await db.query(
-            `
-            INSERT INTO user
-            (name, email, password)
-            VALUES (?, ?, ?)
-            `,
-            [name, email, hashedPassword]
+            'INSERT INTO User (name, email, cpf, password, phone) VALUES (?, ?, ?, ?, ?)',
+            [name, email, cpf || null, hashedPassword, phone || null]
         );
 
         res.status(201).json({
-            message: 'User created successfully'
+            message: 'usuário criado com sucesso'
         });
 
     } catch(error) {
         console.error(error);
 
         res.status(500).json({
-            message: 'Internal server error'
+            message: 'Erro interno do servidor'
         });
     }
 }
@@ -47,14 +49,20 @@ async function login(req, res) {
 
         const { email, password } = req.body;
 
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Email e senha são obrigatórios'
+            });
+        }
+
         const [users] = await db.query(
-            'SELECT * FROM user WHERE email = ?',
+            'SELECT * FROM User WHERE email = ?',
             [email]
         );
 
         if(users.length === 0) {
             return res.status(401).json({
-                message: 'Invalid credentials'
+                message: 'credenciais inválidas'
             });
         }
 
@@ -67,7 +75,7 @@ async function login(req, res) {
 
         if(!validPassword) {
             return res.status(401).json({
-                message: 'Invalid credentials'
+                message: 'credenciais inválidas'
             });
         }
 
@@ -83,7 +91,13 @@ async function login(req, res) {
         );
 
         res.json({
-            token
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                isAdmin: Boolean(user.isAdmin)
+            }
         });
 
     } catch(error) {
