@@ -6,20 +6,21 @@ async function register(req, res) {
     try {
         const { name, email, cpf, password, phone } = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !cpf || !phone || !password) {
             return res.status(400).json({
-                message: 'Nome, email e senha são obrigatórios'
+                message: 'Nome, email, CPF, telefone e senha são obrigatórios'
             });
         }
 
         const [existingUser] = await db.query(
-            'SELECT id FROM User WHERE email = ?',
-            [email]
+            'SELECT email, cpf FROM User WHERE email = ? OR cpf = ? LIMIT 1',
+            [email, cpf]
         );
 
         if (existingUser.length > 0) {
+            const field = existingUser[0].email === email ? 'email' : 'CPF';
             return res.status(400).json({
-                message: 'O email já existe'
+                message: `Este ${field} já está em uso.`
             });
         }
 
@@ -31,11 +32,18 @@ async function register(req, res) {
         );
 
         res.status(201).json({
-            message: 'usuário criado com sucesso'
+            message: 'Usuário criado com sucesso.'
         });
 
     } catch(error) {
         console.error(error);
+
+        if (error.code === 'ER_DUP_ENTRY') {
+            const field = error.message.includes('cpf') ? 'CPF' : 'email';
+            return res.status(400).json({
+                message: `Este ${field} já está em uso.`
+            });
+        }
 
         res.status(500).json({
             message: 'Erro interno do servidor'
@@ -62,7 +70,7 @@ async function login(req, res) {
 
         if(users.length === 0) {
             return res.status(401).json({
-                message: 'credenciais inválidas'
+                message: 'Credenciais inválidas'
             });
         }
 
@@ -75,7 +83,7 @@ async function login(req, res) {
 
         if(!validPassword) {
             return res.status(401).json({
-                message: 'credenciais inválidas'
+                message: 'Credenciais inválidas'
             });
         }
 
@@ -105,7 +113,7 @@ async function login(req, res) {
         console.error(error);
 
         res.status(500).json({
-            message: 'Internal server error'
+            message: 'Erro interno do servidor'
         });
     }
 }

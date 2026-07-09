@@ -1,14 +1,9 @@
-.register-page .auth-visual {
-  background:
-    linear-gradient(150deg, rgba(75, 36, 28, 0.82), rgba(17, 106, 123, 0.38)),
-    url('../assets/hero.png') center / cover;
-}
-
-.register-card {
-  width: min(100% - 48px, 620px);
+.register-page .auth-card {
+  width: min(100%, 620px);
 }
 
 .register-form {
+  display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -19,10 +14,6 @@
 }
 
 @media (max-width: 620px) {
-  .register-card {
-    width: min(100% - 32px, 560px);
-  }
-
   .register-form {
     grid-template-columns: 1fr;
   }

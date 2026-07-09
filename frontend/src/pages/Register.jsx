@@ -1,7 +1,9 @@
-import { useState } from 'react'
-import { registerUser } from '../services/authApi'
-import '../styles/Auth.css'
-import '../styles/Register.css'
+import { useState } from 'react';
+import AuthField from '../components/AuthField';
+import AuthLayout from '../components/AuthLayout';
+import FormMessage from '../components/FormMessage';
+import { registerUser } from '../services/authApi';
+import '../styles/Register.css';
 
 const emptyForm = {
   name: '',
@@ -9,143 +11,135 @@ const emptyForm = {
   cpf: '',
   phone: '',
   password: '',
-}
+};
 
 function Register({ onNavigate }) {
-  const [form, setForm] = useState(emptyForm)
-  const [message, setMessage] = useState('')
-  const [messageType, setMessageType] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [form, setForm] = useState(emptyForm);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
+  const [loading, setLoading] = useState(false);
 
   function updateField(event) {
-    const { name, value } = event.target
+    const { name, value } = event.target;
     setForm((currentForm) => ({
       ...currentForm,
       [name]: value,
-    }))
+    }));
   }
 
   async function handleSubmit(event) {
-    event.preventDefault()
-    setLoading(true)
-    setMessage('Criando cadastro...')
-    setMessageType('')
+    event.preventDefault();
+
+    if (
+      !form.name.trim() ||
+      !form.email.trim() ||
+      !form.cpf.trim() ||
+      !form.phone.trim() ||
+      !form.password.trim()
+    ) {
+      setMessage('Preencha todos os campos obrigatórios.');
+      setMessageType('error');
+      return;
+    }
+
+    if (!form.email.includes('@')) {
+      setMessage('Informe um email válido.');
+      setMessageType('error');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('Criando cadastro...');
+    setMessageType('');
 
     try {
-      const data = await registerUser(form)
-      setMessage(data.message || 'Cadastro criado com sucesso.')
-      setMessageType('success')
-      setForm(emptyForm)
+      const data = await registerUser(form);
+      setMessage(data.message || 'Cadastro criado com sucesso.');
+      setMessageType('success');
+      setForm(emptyForm);
     } catch (error) {
-      setMessage(error.message)
-      setMessageType('error')
+      setMessage(error.message);
+      setMessageType('error');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
-    <main className="auth-page register-page">
-      <section className="auth-visual" aria-label="Cadastro na loja">
-        <div className="auth-brand">
-          <span className="auth-kicker">Nova conta</span>
-          <h1>Crie seu cadastro</h1>
-          <p>Informe seus dados para testar o cadastro conectado ao backend.</p>
-        </div>
-      </section>
+    <AuthLayout pageClass="register-page">
+      <div className="auth-card-header">
+        <h1>Crie sua conta</h1>
+      </div>
 
-      <section className="auth-card register-card" aria-label="Cadastro">
-        <div className="auth-card-header">
-          <h2>Cadastro</h2>
-          <p>Nome, email e senha são obrigatórios.</p>
-        </div>
+      <form className="auth-form register-form" onSubmit={handleSubmit} noValidate>
+        <AuthField
+          id="name"
+          label="Nome"
+          name="name"
+          autoComplete="name"
+          value={form.name}
+          onChange={updateField}
+        />
 
-        <form className="auth-form register-form" onSubmit={handleSubmit}>
-          <label htmlFor="name">
-            Nome
-            <input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              value={form.name}
-              onChange={updateField}
-              required
-            />
-          </label>
+        <AuthField
+          id="registerEmail"
+          label="Email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          value={form.email}
+          onChange={updateField}
+        />
 
-          <label htmlFor="registerEmail">
-            Email
-            <input
-              id="registerEmail"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={form.email}
-              onChange={updateField}
-              required
-            />
-          </label>
+        <AuthField
+          id="cpf"
+          label="CPF"
+          name="cpf"
+          autoComplete="off"
+          maxLength="14"
+          placeholder="000.000.000-00"
+          value={form.cpf}
+          onChange={updateField}
+        />
 
-          <label htmlFor="cpf">
-            CPF
-            <input
-              id="cpf"
-              name="cpf"
-              type="text"
-              autoComplete="off"
-              maxLength="14"
-              placeholder="000.000.000-00"
-              value={form.cpf}
-              onChange={updateField}
-            />
-          </label>
+        <AuthField
+          id="phone"
+          label="Telefone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          maxLength="20"
+          placeholder="(00) 00000-0000"
+          value={form.phone}
+          onChange={updateField}
+        />
 
-          <label htmlFor="phone">
-            Telefone
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              autoComplete="tel"
-              maxLength="20"
-              placeholder="(00) 00000-0000"
-              value={form.phone}
-              onChange={updateField}
-            />
-          </label>
+        <AuthField
+          id="registerPassword"
+          label="Senha"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          value={form.password}
+          onChange={updateField}
+          className="full-field"
+        />
 
-          <label className="full-field" htmlFor="registerPassword">
-            Senha
-            <input
-              id="registerPassword"
-              name="password"
-              type="password"
-              autoComplete="new-password"
-              value={form.password}
-              onChange={updateField}
-              required
-            />
-          </label>
+        <FormMessage message={message} type={messageType} />
 
-          <p className={`auth-message ${messageType}`} aria-live="polite">
-            {message}
-          </p>
+        <button className="auth-primary" type="submit" disabled={loading}>
+          {loading ? 'Criando...' : 'Criar conta'}
+        </button>
+      </form>
 
-          <button className="auth-primary" type="submit" disabled={loading}>
-            {loading ? 'Criando...' : 'Criar conta'}
-          </button>
-        </form>
-
-        <div className="auth-switch">
-          <span>Já tem conta?</span>
-          <button type="button" onClick={() => onNavigate('/login')}>
-            Fazer login
-          </button>
-        </div>
-      </section>
-    </main>
-  )
+      <div className="auth-switch">
+        <span>Já tem conta?</span>
+        <button type="button" onClick={() => onNavigate('/login')}>
+          Fazer login
+        </button>
+      </div>
+    </AuthLayout>
+  );
 }
 
-export default Register
+export default Register;

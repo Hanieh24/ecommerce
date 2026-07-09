@@ -5,7 +5,7 @@ function authenticate(req, res, next) {
 
     if (!authHeader) {
         return res.status(401).json({
-            message: 'Token not provided'
+            message: 'Token não informado'
         });
     }
 
@@ -13,7 +13,7 @@ function authenticate(req, res, next) {
 
     if (type !== 'Bearer' || !token) {
         return res.status(401).json({
-            message: 'Invalid token format'
+            message: 'Formato do token inválido'
         });
     }
 
@@ -22,7 +22,7 @@ function authenticate(req, res, next) {
         next();
     } catch (error) {
         return res.status(401).json({
-            message: 'Invalid token'
+            message: 'Token inválido'
         });
     }
 }
@@ -30,7 +30,7 @@ function authenticate(req, res, next) {
 function requireAdmin(req, res, next) {
     if (!req.user?.isAdmin) {
         return res.status(403).json({
-            message: 'Admin access required'
+            message: 'Acesso de administrador necessário'
         });
     }
 
