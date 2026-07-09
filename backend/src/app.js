@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 const authRoutes = require('./routes/authRoute');
 
@@ -15,6 +17,16 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+
+const frontendDistPath = path.join(__dirname, '../../frontend/dist');
+
+if (fs.existsSync(frontendDistPath)) {
+    app.use(express.static(frontendDistPath));
+
+    app.get(/^(?!\/auth|\/health).*/, (req, res) => {
+        res.sendFile(path.join(frontendDistPath, 'index.html'));
+    });
+}
 
 const port = process.env.PORT || 3000;
 
