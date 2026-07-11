@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
+import AdminOnly from './components/AdminOnly'
+import AdminProductCreate from './pages/AdminProductCreate'
+import AdminProductEdit from './pages/AdminProductEdit'
+import AdminProducts from './pages/AdminProducts'
 import Login from './pages/Login'
+import Products from './pages/Products'
 import Register from './pages/Register'
 import './App.css'
 
@@ -7,10 +12,29 @@ const routes = {
   '/login': 'login',
   '/cadastro': 'register',
   '/register': 'register',
+  '/products': 'products',
+  '/produtos': 'products',
+  '/admin/products': 'adminProducts',
+  '/admin/produtos': 'adminProducts',
+  '/admin/products/new': 'adminProductCreate',
+  '/admin/produtos/novo': 'adminProductCreate',
 }
 
 function getCurrentPage() {
-  return routes[window.location.pathname] || 'login'
+  const path = window.location.pathname
+  const editMatch = path.match(/^\/admin\/products\/([^/]+)\/edit$/)
+
+  if (editMatch) {
+    return {
+      name: 'adminProductEdit',
+      productId: editMatch[1],
+    }
+  }
+
+  return {
+    name: routes[path] || 'login',
+    productId: null,
+  }
 }
 
 function App() {
@@ -30,8 +54,36 @@ function App() {
     setPage(getCurrentPage())
   }
 
-  if (page === 'register') {
+  if (page.name === 'register') {
     return <Register onNavigate={navigate} />
+  }
+
+  if (page.name === 'products') {
+    return <Products />
+  }
+
+  if (page.name === 'adminProductCreate') {
+    return (
+      <AdminOnly onNavigate={navigate}>
+        <AdminProductCreate onNavigate={navigate} />
+      </AdminOnly>
+    )
+  }
+
+  if (page.name === 'adminProducts') {
+    return (
+      <AdminOnly onNavigate={navigate}>
+        <AdminProducts onNavigate={navigate} />
+      </AdminOnly>
+    )
+  }
+
+  if (page.name === 'adminProductEdit') {
+    return (
+      <AdminOnly onNavigate={navigate}>
+        <AdminProductEdit onNavigate={navigate} productId={page.productId} />
+      </AdminOnly>
+    )
   }
 
   return <Login onNavigate={navigate} />

@@ -6,6 +6,8 @@ const path = require('path');
 const fs = require('fs');
 
 const authRoutes = require('./routes/authRoute');
+const productRoutes = require('./routes/productRoute');
+const { uploadsRoot } = require('./middlewares/productBodyParser');
 
 const app = express();
 
@@ -17,13 +19,15 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/products', productRoutes);
+app.use('/uploads', express.static(uploadsRoot));
 
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 
 if (fs.existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
 
-    app.get(/^(?!\/auth|\/health).*/, (req, res) => {
+    app.get(/^(?!\/auth|\/products|\/uploads|\/health).*/, (req, res) => {
         res.sendFile(path.join(frontendDistPath, 'index.html'));
     });
 }

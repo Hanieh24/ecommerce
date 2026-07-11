@@ -16,6 +16,18 @@ async function setupDatabase() {
         await db.query(statement);
     }
 
+    const [columns] = await db.query(
+        `SELECT COLUMN_NAME
+         FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE()
+            AND TABLE_NAME = 'product'
+            AND COLUMN_NAME = 'deletedAt'`
+    );
+
+    if (columns.length === 0) {
+        await db.query('ALTER TABLE product ADD COLUMN deletedAt DATETIME NULL');
+    }
+
     await db.end();
     console.log('Database schema created successfully');
 }
