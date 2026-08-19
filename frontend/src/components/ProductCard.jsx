@@ -1,4 +1,4 @@
-import heroImage from '../assets/hero.png';
+import heroImage from '../assets/lattaffa-perfume-hero.svg';
 import { formatCurrency } from '../utils/format';
 
 function ProductCard({

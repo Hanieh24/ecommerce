@@ -68,7 +68,8 @@ function Register({ onNavigate }) {
   return (
     <AuthLayout pageClass="register-page">
       <div className="auth-card-header">
-        <h1>Crie sua conta</h1>
+        <span className="arabic-kicker" lang="ar">لطافة</span>
+        <h1>Crie sua conta Lattaffa</h1>
       </div>
 
       <form className="auth-form register-form" onSubmit={handleSubmit} noValidate>

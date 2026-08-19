@@ -1,3 +1,129 @@
 #root {
   min-height: 100vh;
 }
+
+.site-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(circle at top left, rgba(184, 135, 63, 0.16), transparent 34rem),
+    linear-gradient(180deg, #f9f3e8 0%, #efe2cf 100%);
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 68px;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(123, 78, 35, 0.22);
+  background: rgba(255, 249, 238, 0.94);
+  backdrop-filter: blur(12px);
+}
+
+.brand-button,
+.site-nav button,
+.site-session button {
+  border: 0;
+  background: none;
+  color: #2a1717;
+  font: inherit;
+  font-weight: 800;
+}
+
+.brand-button {
+  display: grid;
+  gap: 1px;
+  color: #6d1f2b;
+  font-size: 1.15rem;
+  text-align: left;
+}
+
+.brand-button small {
+  color: #b8873f;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.88rem;
+  line-height: 1;
+}
+
+.site-nav,
+.site-session {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.site-nav {
+  justify-content: center;
+}
+
+.site-nav button,
+.site-session button {
+  min-height: 38px;
+  border-radius: 6px;
+  padding: 0 10px;
+}
+
+.site-nav button:hover,
+.site-session button:hover {
+  background: #f2e5d1;
+  color: #7c2532;
+}
+
+.site-session span {
+  max-width: 140px;
+  overflow: hidden;
+  color: #7a6250;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.site-content {
+  flex: 1;
+}
+
+.site-content .products-page {
+  min-height: auto;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 32px;
+  border-top: 1px solid rgba(123, 78, 35, 0.22);
+  color: #7a6250;
+  background: #fff8ec;
+  font-size: 0.92rem;
+}
+
+.site-footer span:first-child {
+  color: #7c2532;
+  font-weight: 900;
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 16px 20px;
+  }
+
+  .site-nav,
+  .site-session {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .site-footer {
+    display: grid;
+    padding: 20px;
+  }
+}

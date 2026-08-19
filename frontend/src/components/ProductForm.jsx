@@ -24,7 +24,7 @@ function toFormProduct(product) {
   };
 }
 
-function ProductForm({ buttonLabel = 'Salvar produto', initialProduct, loading, onSubmit }) {
+function ProductForm({ buttonLabel = 'Salvar perfume', initialProduct, loading, onSubmit }) {
   const [product, setProduct] = useState(() => toFormProduct(initialProduct));
   const [previewUrl, setPreviewUrl] = useState('');
 
@@ -100,7 +100,7 @@ function ProductForm({ buttonLabel = 'Salvar produto', initialProduct, loading, 
       </label>
 
       <label className="full-field" htmlFor="productImageUrl">
-        URL da imagem
+        URL da imagem do perfume
         <input
           id="productImageUrl"
           name="imgUrl"
@@ -116,7 +116,7 @@ function ProductForm({ buttonLabel = 'Salvar produto', initialProduct, loading, 
       </label>
 
       {currentImage ? (
-        <img className="product-preview" src={currentImage} alt="Prévia do produto" />
+        <img className="product-preview" src={currentImage} alt="Prévia do perfume" />
       ) : null}
 
       <label className="full-field" htmlFor="productDescription">

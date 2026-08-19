@@ -4,8 +4,8 @@
   min-height: 100vh;
   padding: 32px;
   background:
-    linear-gradient(150deg, rgba(12, 32, 41, 0.54), rgba(17, 106, 123, 0.2)),
-    url('../assets/hero.png');
+    linear-gradient(150deg, rgba(19, 11, 18, 0.78), rgba(91, 38, 34, 0.34)),
+    url('../assets/lattaffa-perfume-hero.svg');
   background-size: cover;
   background-position: center;
 }
@@ -13,10 +13,10 @@
 .auth-card {
   width: min(100%, 430px);
   padding: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.64);
+  border: 1px solid rgba(223, 179, 95, 0.45);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.94);
-  box-shadow: 0 22px 60px rgba(23, 33, 47, 0.2);
+  background: rgba(255, 248, 236, 0.95);
+  box-shadow: 0 22px 60px rgba(29, 16, 14, 0.32);
   backdrop-filter: blur(12px);
 }
 
@@ -27,7 +27,7 @@
 
 .auth-card-header h1 {
   margin: 0;
-  color: #17212f;
+  color: #2a1717;
   font-size: 1.75rem;
   font-weight: 700;
   line-height: 1.15;
@@ -35,7 +35,7 @@
 
 .auth-card-header p {
   margin: 0.5rem 0 0;
-  color: #666;
+  color: #7a6250;
 }
 
 .auth-form {
@@ -46,7 +46,7 @@
 .auth-form label {
   display: grid;
   gap: 0.35rem;
-  color: #27364a;
+  color: #513527;
   font-size: 0.875rem;
   font-weight: 700;
 }
@@ -55,16 +55,16 @@
   width: 100%;
   min-height: 46px;
   padding: 0.65rem 0.75rem;
-  border: 1px solid #cad5e3;
+  border: 1px solid #d8bd8d;
   border-radius: 6px;
-  color: #17212f;
-  background: #fff;
+  color: #2a1717;
+  background: #fffdf8;
   outline: none;
 }
 
 .auth-form input:focus {
-  border-color: #116a7b;
-  box-shadow: 0 0 0 3px rgba(17, 106, 123, 0.14);
+  border-color: #b8873f;
+  box-shadow: 0 0 0 3px rgba(184, 135, 63, 0.2);
 }
 
 .auth-primary {
@@ -72,14 +72,14 @@
   border: none;
   border-radius: 6px;
   color: #fff;
-  background: #116a7b;
+  background: #7c2532;
   font-size: 1rem;
   font-weight: 800;
   cursor: pointer;
 }
 
 .auth-primary:hover {
-  background: #0b4f5c;
+  background: #5f1c27;
 }
 
 .auth-primary:disabled {
@@ -95,14 +95,14 @@
 .auth-switch button {
   background: none;
   border: none;
-  color: #116a7b;
+  color: #7c2532;
   cursor: pointer;
   font-size: 0.875rem;
   font-weight: 800;
 }
 
 .auth-switch button:hover {
-  color: #0b4f5c;
+  color: #5f1c27;
   text-decoration: underline;
 }
 
@@ -112,7 +112,7 @@
   margin: 0;
   padding: 0.5rem;
   border-radius: 4px;
-  color: #64748b;
+  color: #7a6250;
   font-size: 0.875rem;
   font-weight: 700;
 }

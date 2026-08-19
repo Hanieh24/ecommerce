@@ -1,6 +1,11 @@
 const db = require('../config/database');
 
 let productSchemaReady;
+let productImageColumn = 'imgUrl';
+
+function imageColumnSql() {
+    return `\`${productImageColumn}\``;
+}
 
 async function ensureProductSchema() {
     if (!productSchemaReady) {
@@ -10,11 +15,16 @@ async function ensureProductSchema() {
                  FROM INFORMATION_SCHEMA.COLUMNS
                  WHERE TABLE_SCHEMA = DATABASE()
                     AND TABLE_NAME = 'product'
-                    AND COLUMN_NAME = 'deletedAt'`
+                    AND COLUMN_NAME IN ('deletedAt', 'imgUrl', 'img-url')`
             );
+            const columnNames = columns.map((column) => column.COLUMN_NAME);
 
-            if (columns.length === 0) {
+            if (!columnNames.includes('deletedAt')) {
                 await db.query('ALTER TABLE product ADD COLUMN deletedAt DATETIME NULL');
+            }
+
+            if (columnNames.includes('img-url') && !columnNames.includes('imgUrl')) {
+                productImageColumn = 'img-url';
             }
         })().catch((error) => {
             productSchemaReady = null;
@@ -82,7 +92,7 @@ async function listProducts(req, res) {
                 name,
                 description,
                 price,
-                \`img-url\` AS imgUrl,
+                ${imageColumnSql()} AS imgUrl,
                 stock,
                 createdAt,
                 updatedAt
@@ -120,7 +130,7 @@ async function getProductById(req, res) {
                 name,
                 description,
                 price,
-                \`img-url\` AS imgUrl,
+                ${imageColumnSql()} AS imgUrl,
                 stock,
                 createdAt,
                 updatedAt
@@ -160,7 +170,7 @@ async function createProduct(req, res) {
         }
 
         const [result] = await db.query(
-            'INSERT INTO product (name, description, price, `img-url`, stock) VALUES (?, ?, ?, ?, ?)',
+            `INSERT INTO product (name, description, price, ${imageColumnSql()}, stock) VALUES (?, ?, ?, ?, ?)`,
             [product.name, product.description, product.price, product.imgUrl, product.stock]
         );
 
@@ -170,7 +180,7 @@ async function createProduct(req, res) {
                 name,
                 description,
                 price,
-                \`img-url\` AS imgUrl,
+                ${imageColumnSql()} AS imgUrl,
                 stock,
                 createdAt,
                 updatedAt
@@ -214,7 +224,7 @@ async function updateProduct(req, res) {
 
         const [result] = await db.query(
             `UPDATE product
-             SET name = ?, description = ?, price = ?, \`img-url\` = ?, stock = ?
+             SET name = ?, description = ?, price = ?, ${imageColumnSql()} = ?, stock = ?
              WHERE id = ? AND deletedAt IS NULL`,
             [product.name, product.description, product.price, product.imgUrl, product.stock, id]
         );
@@ -231,7 +241,7 @@ async function updateProduct(req, res) {
                 name,
                 description,
                 price,
-                \`img-url\` AS imgUrl,
+                ${imageColumnSql()} AS imgUrl,
                 stock,
                 createdAt,
                 updatedAt

@@ -36,6 +36,7 @@ coverage/
 *.pid
 *.seed
 *.pid.lock
+uploads/
 
 # Optional package manager files
 .pnpm-store/

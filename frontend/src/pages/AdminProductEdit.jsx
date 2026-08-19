@@ -52,7 +52,7 @@ function AdminProductEdit({ onNavigate, productId }) {
         price: Number(formProduct.price),
         stock: Number(formProduct.stock),
       });
-      setMessage('Produto atualizado com sucesso.');
+      setMessage('Perfume atualizado com sucesso.');
       setMessageType('success');
       await loadProduct();
     } catch (error) {
@@ -67,8 +67,8 @@ function AdminProductEdit({ onNavigate, productId }) {
     <main className="products-page">
       <section className="products-header">
         <div>
-          <h1>Editar produto</h1>
-          <p>Atualize as informações do produto.</p>
+          <h1>Editar perfume</h1>
+          <p>Atualize as informações da fragrância.</p>
         </div>
         <button type="button" onClick={() => onNavigate('/admin/products')}>
           Voltar para gerenciamento
@@ -77,11 +77,11 @@ function AdminProductEdit({ onNavigate, productId }) {
 
       <section className="products-panel form-page-panel">
         <div className="panel-header">
-          <h2>Dados do produto</h2>
+          <h2>Dados da fragrância</h2>
         </div>
         <FormMessage message={message} type={messageType} />
         {loading ? (
-          <p className="empty-state">Carregando produto...</p>
+          <p className="empty-state">Carregando fragrância...</p>
         ) : product ? (
           <ProductForm
             buttonLabel="Salvar alterações"
@@ -91,7 +91,7 @@ function AdminProductEdit({ onNavigate, productId }) {
             onSubmit={handleUpdateProduct}
           />
         ) : (
-          <p className="empty-state">Produto não encontrado.</p>
+          <p className="empty-state">Fragrância não encontrada.</p>
         )}
       </section>
     </main>

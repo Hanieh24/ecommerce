@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS product (
     name VARCHAR(150) NOT NULL,
     description VARCHAR(500),
     price DECIMAL(10, 2) NOT NULL,
-    `img-url` VARCHAR(500),
+    imgUrl VARCHAR(500),
     stock INT NOT NULL DEFAULT 0,
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -51,8 +51,15 @@ CREATE TABLE IF NOT EXISTS product (
 
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    subtotal DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    deliveryFee DECIMAL(10, 2) NOT NULL DEFAULT 0,
     total DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    stripeSessionId VARCHAR(255),
+    stripePaymentIntentId VARCHAR(255),
+    paidAt DATETIME NULL,
+    trackingCode VARCHAR(80) NULL,
     createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fkUser INT NOT NULL,
     fkStatus INT NOT NULL,
     fkAddress INT NOT NULL,
@@ -67,6 +74,34 @@ CREATE TABLE IF NOT EXISTS orders (
     CONSTRAINT fk_orders_address
         FOREIGN KEY (fkAddress) REFERENCES address(id)
         ON DELETE RESTRICT
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cart (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fkUser INT NOT NULL UNIQUE,
+    CONSTRAINT fk_cart_user
+        FOREIGN KEY (fkUser) REFERENCES User(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS cartItem (
+    fkCart INT NOT NULL,
+    fkProduct INT NOT NULL,
+    quantity INT NOT NULL,
+    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (fkCart, fkProduct),
+    CONSTRAINT fk_cart_item_cart
+        FOREIGN KEY (fkCart) REFERENCES cart(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_cart_item_product
+        FOREIGN KEY (fkProduct) REFERENCES product(id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
@@ -90,4 +125,12 @@ INSERT IGNORE INTO addressTitle (name)
 VALUES ('Casa'), ('Trabalho'), ('Outro');
 
 INSERT IGNORE INTO status (name)
-VALUES ('Pendente'), ('Pago'), ('Enviado'), ('Entregue'), ('Cancelado');
+VALUES
+    ('Pendente'),
+    ('Aguardando pagamento'),
+    ('Pago'),
+    ('Em Separacao'),
+    ('Rejeitado'),
+    ('Enviado'),
+    ('Entregue'),
+    ('Cancelado');

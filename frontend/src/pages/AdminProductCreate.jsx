@@ -17,7 +17,7 @@ function AdminProductCreate({ onNavigate }) {
     }
 
     setSaving(true);
-    setMessage('Salvando produto...');
+    setMessage('Salvando perfume...');
     setMessageType('');
 
     try {
@@ -27,7 +27,7 @@ function AdminProductCreate({ onNavigate }) {
         stock: Number(product.stock),
       });
       resetForm();
-      setMessage('Produto cadastrado com sucesso.');
+      setMessage('Perfume cadastrado com sucesso.');
       setMessageType('success');
     } catch (error) {
       setMessage(error.message);
@@ -41,20 +41,20 @@ function AdminProductCreate({ onNavigate }) {
     <main className="products-page">
       <section className="products-header">
         <div>
-          <h1>Novo produto</h1>
-          <p>Cadastre um produto para aparecer na loja.</p>
+          <h1>Novo perfume</h1>
+          <p>Cadastre uma fragrância para aparecer na loja.</p>
         </div>
         <button type="button" onClick={() => onNavigate('/admin/products')}>
-          Gerenciar produtos
+          Gerenciar fragrâncias
         </button>
       </section>
 
       <section className="products-panel form-page-panel">
         <div className="panel-header">
-          <h2>Dados do produto</h2>
+          <h2>Dados da fragrância</h2>
         </div>
         <FormMessage message={message} type={messageType} />
-        <ProductForm buttonLabel="Cadastrar produto" loading={saving} onSubmit={handleCreateProduct} />
+        <ProductForm buttonLabel="Cadastrar perfume" loading={saving} onSubmit={handleCreateProduct} />
       </section>
     </main>
   );

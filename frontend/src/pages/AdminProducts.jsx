@@ -58,14 +58,14 @@ function AdminProducts({ onNavigate }) {
 
   async function handleDeleteProduct(id) {
     setDeletingId(id);
-    setMessage('Removendo produto...');
+    setMessage('Removendo perfume...');
     setMessageType('');
 
     try {
       await deleteProduct(id);
       setProducts((currentProducts) => currentProducts.filter((product) => product.id !== id));
       setSelectedProduct((currentProduct) => (currentProduct?.id === id ? null : currentProduct));
-      setMessage('Produto removido com sucesso.');
+      setMessage('Perfume removido com sucesso.');
       setMessageType('success');
     } catch (error) {
       setMessage(error.message);
@@ -79,18 +79,18 @@ function AdminProducts({ onNavigate }) {
     <main className="products-page">
       <section className="products-header">
         <div>
-          <h1>Gerenciar produtos</h1>
-          <p>Edite ou remova produtos cadastrados.</p>
+          <h1>Gerenciar fragrâncias</h1>
+          <p>Edite ou remova perfumes cadastrados.</p>
         </div>
         <button type="button" onClick={() => onNavigate('/admin/products/new')}>
-          Novo produto
+          Novo perfume
         </button>
       </section>
 
       <section className="products-grid public-products-grid">
         <div className="products-panel">
           <div className="panel-header">
-            <h2>Produtos cadastrados</h2>
+            <h2>Fragrâncias cadastradas</h2>
             <button type="button" onClick={loadProducts} disabled={loadingProducts}>
               {loadingProducts ? 'Carregando...' : 'Atualizar'}
             </button>
@@ -99,9 +99,9 @@ function AdminProducts({ onNavigate }) {
           <FormMessage message={message} type={messageType} />
 
           {loadingProducts ? (
-            <p className="empty-state">Carregando produtos...</p>
+            <p className="empty-state">Carregando fragrâncias...</p>
           ) : products.length === 0 ? (
-            <p className="empty-state">Nenhum produto cadastrado.</p>
+            <p className="empty-state">Nenhuma fragrância cadastrada.</p>
           ) : (
             <div className="product-list">
               {products.map((product) => (
@@ -141,7 +141,7 @@ function AdminProducts({ onNavigate }) {
               </div>
             </dl>
           ) : (
-            <p className="empty-state">Selecione um produto para ver o resumo.</p>
+            <p className="empty-state">Selecione uma fragrância para ver o resumo.</p>
           )}
         </aside>
       </section>

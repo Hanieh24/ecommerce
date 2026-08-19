@@ -7,11 +7,17 @@ const fs = require('fs');
 
 const authRoutes = require('./routes/authRoute');
 const productRoutes = require('./routes/productRoute');
+const cartRoutes = require('./routes/cartRoute');
+const addressRoutes = require('./routes/addressRoute');
+const orderRoutes = require('./routes/orderRoute');
+const adminOrderRoutes = require('./routes/adminOrderRoute');
+const stripeWebhookController = require('./controllers/stripeWebhookController');
 const { uploadsRoot } = require('./middlewares/productBodyParser');
 
 const app = express();
 
 app.use(cors());
+app.post('/stripe/webhook', express.raw({ type: 'application/json' }), stripeWebhookController.handleStripeWebhook);
 app.use(express.json());
 
 app.get('/health', (req, res) => {
@@ -20,6 +26,10 @@ app.get('/health', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
+app.use('/cart', cartRoutes);
+app.use('/addresses', addressRoutes);
+app.use('/orders', orderRoutes);
+app.use('/admin/orders', adminOrderRoutes);
 app.use('/uploads', express.static(uploadsRoot));
 
 const frontendDistPath = path.join(__dirname, '../../frontend/dist');
@@ -27,7 +37,7 @@ const frontendDistPath = path.join(__dirname, '../../frontend/dist');
 if (fs.existsSync(frontendDistPath)) {
     app.use(express.static(frontendDistPath));
 
-    app.get(/^(?!\/auth|\/products|\/uploads|\/health).*/, (req, res) => {
+    app.get(/^(?!\/auth|\/products|\/cart|\/addresses|\/orders|\/admin|\/stripe|\/uploads|\/health).*/, (req, res) => {
         res.sendFile(path.join(frontendDistPath, 'index.html'));
     });
 }

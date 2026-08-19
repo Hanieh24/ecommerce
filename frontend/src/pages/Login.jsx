@@ -42,6 +42,14 @@ function Login({ onNavigate }) {
       saveSession(data);
       setMessage('Login realizado com sucesso.');
       setMessageType('success');
+      const redirectPath = sessionStorage.getItem('postLoginRedirect');
+      sessionStorage.removeItem('postLoginRedirect');
+
+      if (data.user?.isAdmin) {
+        onNavigate('/admin');
+      } else {
+        onNavigate(redirectPath || '/products');
+      }
     } catch (error) {
       setMessage(error.message);
       setMessageType('error');
@@ -53,8 +61,9 @@ function Login({ onNavigate }) {
   return (
     <AuthLayout pageClass="login-page">
       <div className="auth-card-header">
+        <span className="arabic-kicker" lang="ar">لطافة</span>
         <h1>Bem-vindo de volta</h1>
-        <p>Entre na sua conta para continuar.</p>
+        <p>Entre para acompanhar suas fragrâncias Lattaffa.</p>
       </div>
 
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
