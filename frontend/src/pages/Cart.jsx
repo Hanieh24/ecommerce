@@ -3,10 +3,13 @@ import FormMessage from '../components/FormMessage';
 import {
   createCheckout,
   getAddressTitles,
+  getAddresses,
   getCart,
   removeCartItem,
   updateCartItem,
 } from '../services/cartApi';
+import { getSession } from '../services/authApi';
+import { setPostLoginRedirect } from '../utils/authRedirect';
 import { formatCurrency } from '../utils/format';
 import '../styles/Products.css';
 
@@ -35,6 +38,8 @@ function normalizeCart(data) {
 function Cart({ onNavigate }) {
   const [cart, setCart] = useState(() => normalizeCart({}));
   const [addressTitles, setAddressTitles] = useState(fallbackAddressTitles);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [address, setAddress] = useState(emptyAddress);
   const [cepAutofill, setCepAutofill] = useState({
     logradouro: false,
@@ -51,6 +56,14 @@ function Cart({ onNavigate }) {
     setLoading(true);
 
     try {
+      const { token } = getSession();
+
+      if (!token) {
+        setPostLoginRedirect('/cart');
+        onNavigate('/login');
+        return;
+      }
+
       const data = await getCart();
       setCart(normalizeCart(data));
       setMessage('');
@@ -61,7 +74,7 @@ function Cart({ onNavigate }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onNavigate]);
 
   const loadAddressTitles = useCallback(async function loadAddressTitles() {
     try {
@@ -81,14 +94,32 @@ function Cart({ onNavigate }) {
     }
   }, []);
 
+  const loadAddresses = useCallback(async function loadAddresses() {
+    try {
+      const data = await getAddresses();
+      const userAddresses = data.addresses || [];
+      setAddresses(userAddresses);
+      
+      if (userAddresses.length === 0) {
+        setShowAddressForm(true);
+      } else {
+        setSelectedAddressId(prevId => prevId || userAddresses[0].id);
+      }
+    } catch {
+      setAddresses([]);
+      setShowAddressForm(true);
+    }
+  }, []);
+
   useEffect(() => {
     const timerId = window.setTimeout(() => {
       loadCart();
       loadAddressTitles();
+      loadAddresses();
     }, 0);
 
     return () => window.clearTimeout(timerId);
-  }, [loadAddressTitles, loadCart]);
+  }, [loadAddressTitles, loadCart, loadAddresses]);
 
   function updateAddressField(event) {
     const { name, value } = event.target;
@@ -162,12 +193,31 @@ function Cart({ onNavigate }) {
   }
 
   async function handleCheckout() {
+    const { token } = getSession();
+
+    if (!token) {
+      setPostLoginRedirect('/cart');
+      onNavigate('/login');
+      return;
+    }
+
     setCheckingOut(true);
     setMessage('Preparando pagamento...');
     setMessageType('');
 
     try {
-      const checkoutPayload = showAddressForm ? { address } : {};
+      let checkoutPayload = {};
+      
+      if (showAddressForm) {
+        checkoutPayload = { address };
+        console.log('Sending checkout with new address:', checkoutPayload);
+      } else if (selectedAddressId) {
+        checkoutPayload = { addressId: selectedAddressId };
+        console.log('Sending checkout with existing address ID:', checkoutPayload);
+      } else {
+        console.log('Sending checkout without address:', checkoutPayload);
+      }
+      
       const data = await createCheckout(checkoutPayload);
 
       if (data.checkout?.url) {
@@ -178,6 +228,7 @@ function Cart({ onNavigate }) {
       setMessage('Pedido criado, mas o link do pagamento não foi recebido.');
       setMessageType('error');
     } catch (error) {
+      console.error('Checkout error:', error);
       if (error.data?.addressRequired) {
         setShowAddressForm(true);
       }
@@ -270,6 +321,32 @@ function Cart({ onNavigate }) {
               <dd>{formatCurrency(estimatedTotal)}</dd>
             </div>
           </dl>
+
+          {addresses.length > 0 && !showAddressForm ? (
+            <div className="address-selection">
+              <label htmlFor="addressSelect">
+                Endereço de entrega
+                <select 
+                  id="addressSelect" 
+                  value={selectedAddressId || ''} 
+                  onChange={(e) => setSelectedAddressId(Number(e.target.value))}
+                >
+                  {addresses.map((addr) => (
+                    <option key={addr.id} value={addr.id}>
+                      {addr.title} - {addr.logradouro}, {addr.numero}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button 
+                type="button" 
+                onClick={() => setShowAddressForm(true)}
+                className="secondary-button"
+              >
+                Usar novo endereço
+              </button>
+            </div>
+          ) : null}
 
           {showAddressForm ? (
             <form className="checkout-address" onSubmit={(event) => event.preventDefault()}>

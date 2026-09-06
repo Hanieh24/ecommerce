@@ -26,6 +26,48 @@
   font-weight: 800;
 }
 
+.secondary-button {
+  min-height: 36px;
+  border: 1px solid #7c2532;
+  border-radius: 6px;
+  padding: 0 12px;
+  color: #7c2532;
+  background: transparent;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.secondary-button:hover {
+  background: #7c2532;
+  color: #fff8ec;
+}
+
+.address-selection {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+.address-selection label {
+  display: block;
+  margin-bottom: 8px;
+  color: #2a1717;
+  font-weight: 600;
+}
+
+.address-selection select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #d4c4b0;
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #fff;
+  color: #2a1717;
+  font-size: 1rem;
+}
+
 .products-header h1,
 .products-header p,
 .access-panel h1,

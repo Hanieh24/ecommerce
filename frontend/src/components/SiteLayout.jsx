@@ -1,4 +1,5 @@
 import { clearSession, getSession } from '../services/authApi';
+import { setPostLoginRedirect } from '../utils/authRedirect';
 import '../App.css';
 
 function SiteLayout({ children, onNavigate }) {
@@ -7,6 +8,16 @@ function SiteLayout({ children, onNavigate }) {
   function handleLogout() {
     clearSession();
     onNavigate('/login');
+  }
+
+  function handleAuthNavigate(path) {
+    const currentPath = window.location.pathname;
+
+    if (!['/login', '/cadastro', '/register'].includes(currentPath)) {
+      setPostLoginRedirect(currentPath);
+    }
+
+    onNavigate(path);
   }
 
   return (
@@ -44,10 +55,10 @@ function SiteLayout({ children, onNavigate }) {
             </>
           ) : (
             <>
-              <button type="button" onClick={() => onNavigate('/login')}>
+              <button type="button" onClick={() => handleAuthNavigate('/login')}>
                 Entrar
               </button>
-              <button type="button" onClick={() => onNavigate('/cadastro')}>
+              <button type="button" onClick={() => handleAuthNavigate('/cadastro')}>
                 Cadastrar
               </button>
             </>

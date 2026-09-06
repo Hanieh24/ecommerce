@@ -5,6 +5,7 @@ import { addCartItem } from '../services/cartApi';
 import { getSession } from '../services/authApi';
 import { getProductById, getProducts } from '../services/productApi';
 import { formatCurrency } from '../utils/format';
+import { setPendingCartItem, setPostLoginRedirect } from '../utils/authRedirect';
 import '../styles/Products.css';
 
 function normalizeProducts(data) {
@@ -74,10 +75,11 @@ function Products({ onNavigate }) {
     const { token } = getSession();
 
     if (!token) {
-      sessionStorage.setItem('postLoginRedirect', '/products');
+      setPendingCartItem(selectedProduct.id, Number(quantity));
+      setPostLoginRedirect('/cart');
       setMessage('Faça login ou cadastre-se para adicionar fragrâncias ao carrinho.');
       setMessageType('error');
-      onNavigate('/login');
+      onNavigate('/cadastro');
       return;
     }
 

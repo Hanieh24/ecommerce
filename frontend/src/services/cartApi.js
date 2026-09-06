@@ -40,6 +40,10 @@ export function getAddressTitles() {
   return request('/addresses/titles');
 }
 
+export function getAddresses() {
+  return request('/addresses');
+}
+
 export function addCartItem(productId, quantity) {
   return request('/cart/items', {
     method: 'POST',

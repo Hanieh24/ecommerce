@@ -177,6 +177,9 @@ async function createStripeCheckoutSession(req, order, items) {
         [req.user.id]
     );
 
+    const userEmail = users[0]?.email;
+    const isValidEmail = userEmail && userEmail.includes('@') && userEmail.includes('.');
+    
     const { successUrl, cancelUrl } = buildCheckoutUrls(req);
     const lineItems = items.map((item) => ({
         quantity: item.quantity,
@@ -202,10 +205,9 @@ async function createStripeCheckoutSession(req, order, items) {
         });
     }
 
-    return stripe.checkout.sessions.create({
+    const sessionConfig = {
         mode: 'payment',
         payment_method_types: ['card'],
-        customer_email: users[0]?.email,
         client_reference_id: String(order.id),
         metadata: {
             orderId: String(order.id),
@@ -220,7 +222,13 @@ async function createStripeCheckoutSession(req, order, items) {
         line_items: lineItems,
         success_url: successUrl,
         cancel_url: cancelUrl
-    });
+    };
+
+    if (isValidEmail) {
+        sessionConfig.customer_email = userEmail;
+    }
+
+    return stripe.checkout.sessions.create(sessionConfig);
 }
 
 async function createCheckout(req, res) {
@@ -309,6 +317,13 @@ async function createCheckout(req, res) {
     } catch (error) {
         await connection.rollback();
         console.error(error);
+
+        if (error.type?.startsWith('Stripe') || error.raw?.message) {
+            return res.status(500).json({
+                message: error.raw?.message || 'Não foi possível iniciar o pagamento no Stripe.'
+            });
+        }
+
         res.status(500).json({
             message: error.message === 'STRIPE_SECRET_KEY não configurada.'
                 ? error.message

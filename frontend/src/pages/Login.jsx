@@ -3,6 +3,12 @@ import AuthField from '../components/AuthField';
 import AuthLayout from '../components/AuthLayout';
 import FormMessage from '../components/FormMessage';
 import { loginUser, saveSession } from '../services/authApi';
+import { addCartItem } from '../services/cartApi';
+import {
+  clearPostLoginRedirect,
+  consumePendingCartItem,
+  getPostLoginRedirect,
+} from '../utils/authRedirect';
 
 function Login({ onNavigate }) {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -42,11 +48,15 @@ function Login({ onNavigate }) {
       saveSession(data);
       setMessage('Login realizado com sucesso.');
       setMessageType('success');
-      const redirectPath = sessionStorage.getItem('postLoginRedirect');
-      sessionStorage.removeItem('postLoginRedirect');
+      const redirectPath = getPostLoginRedirect();
+      const pendingCartItem = consumePendingCartItem();
+      clearPostLoginRedirect();
 
       if (data.user?.isAdmin) {
         onNavigate('/admin');
+      } else if (pendingCartItem?.productId) {
+        await addCartItem(pendingCartItem.productId, Number(pendingCartItem.quantity || 1));
+        onNavigate('/cart');
       } else {
         onNavigate(redirectPath || '/products');
       }

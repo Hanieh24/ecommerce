@@ -57,6 +57,7 @@ function Register({ onNavigate }) {
       setMessage(data.message || 'Cadastro criado com sucesso.');
       setMessageType('success');
       setForm(emptyForm);
+      onNavigate('/login');
     } catch (error) {
       setMessage(error.message);
       setMessageType('error');

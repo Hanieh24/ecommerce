@@ -68,6 +68,14 @@ function App() {
     setPage(getCurrentPage())
   }
 
+  if (page.name === 'login') {
+    return (
+      <SiteLayout onNavigate={navigate}>
+        <Login onNavigate={navigate} />
+      </SiteLayout>
+    )
+  }
+
   if (page.name === 'register') {
     return (
       <SiteLayout onNavigate={navigate}>
